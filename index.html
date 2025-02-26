@@ -14,6 +14,7 @@
             --modal-bg: #ffffff;
             --input-bg: #f5f5f5;
             --input-border: #dddddd;
+            --widget-width: 360px;
         }
 
         body {
@@ -55,7 +56,7 @@
             border: none;
             padding: 12px 24px;
             font-size: 1rem;
-            border-radius: 4px;
+            border-radius: 50px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 8px var(--shadow-color);
@@ -63,6 +64,15 @@
             bottom: 30px;
             right: 30px;
             z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .contact-btn i {
+            font-size: 1.5rem;
         }
 
         .contact-btn:hover {
@@ -81,37 +91,66 @@
             --input-border: #444444;
         }
 
-        /* Modal styles */
-        .modal {
-            display: none;
+        /* Contact Widget Styles */
+        .contact-widget {
             position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
+            bottom: 100px;
+            right: 30px;
+            width: var(--widget-width);
+            background-color: var(--modal-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .contact-widget.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        .widget-header {
+            background-color: var(--button-bg);
+            color: white;
+            padding: 15px 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .widget-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .widget-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
         }
 
-        .modal-content {
-            background-color: var(--modal-bg);
-            margin: auto;
+        .widget-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .widget-body {
             padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 80%;
-            box-shadow: 0 4px 8px var(--shadow-color);
-        }
-
-        .close {
-            color: var(--text-color);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
         }
 
         /* Form styles */
@@ -127,18 +166,27 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            font-size: 14px;
         }
 
         .form-group input, 
         .form-group textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--input-border);
-            border-radius: 4px;
+            border-radius: 8px;
             background-color: var(--input-bg);
             color: var(--text-color);
             font-family: inherit;
             box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--button-bg);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.1);
         }
 
         .form-group textarea {
@@ -150,32 +198,59 @@
             background-color: var(--button-bg);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 1rem;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%;
+            font-weight: 600;
         }
 
         .submit-btn:hover {
             background-color: var(--button-hover);
+            transform: translateY(-2px);
         }
 
+        /* Responsive styles */
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
             
-            .modal-content {
-                width: 95%;
+            .contact-widget {
+                width: calc(100% - 40px);
+                right: 20px;
+                bottom: 90px;
             }
 
             .contact-btn {
                 bottom: 20px;
                 right: 20px;
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                width: 50px;
+                height: 50px;
             }
+        }
+
+        /* Animation for widget */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .contact-btn.pulse {
+            animation: pulse 1s infinite;
+        }
+
+        /* Chat icon */
+        .chat-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
         }
     </style>
 </head>
@@ -188,13 +263,17 @@
     </div>
 
     <!-- Contact Button (Fixed at bottom right) -->
-    <button class="contact-btn" id="contactBtn">Contact Me</button>
+    <button class="contact-btn" id="contactBtn" aria-label="Contact Me">
+        <span class="chat-icon"></span>
+    </button>
 
-    <!-- Contact Modal -->
-    <div id="contactModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Contact Me</h2>
+    <!-- Contact Widget -->
+    <div id="contactWidget" class="contact-widget">
+        <div class="widget-header">
+            <h2 class="widget-title">Contact Me</h2>
+            <button class="widget-close" id="widgetClose" aria-label="Close">&times;</button>
+        </div>
+        <div class="widget-body">
             <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
                 <!-- Add your Web3Forms access key here -->
                 <input type="hidden" name="access_key" value="7b3ad87e-e480-4bda-bb88-64ace9091849">
@@ -237,27 +316,38 @@
             }
         }
 
-        // Get the modal
-        const modal = document.getElementById("contactModal");
+        // Get the widget elements
+        const widget = document.getElementById("contactWidget");
         const btn = document.getElementById("contactBtn");
-        const span = document.getElementsByClassName("close")[0];
+        const closeBtn = document.getElementById("widgetClose");
 
-        // Open modal when button is clicked
+        // Open widget when button is clicked
         btn.onclick = function() {
-            modal.style.display = "flex";
+            widget.classList.toggle('active');
+            btn.classList.toggle('pulse');
         }
 
-        // Close modal when X is clicked
-        span.onclick = function() {
-            modal.style.display = "none";
+        // Close widget when X is clicked
+        closeBtn.onclick = function() {
+            widget.classList.remove('active');
+            btn.classList.remove('pulse');
         }
 
-        // Close modal when clicking outside of it
+        // Close widget when clicking outside of it
         window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            if (!widget.contains(event.target) && event.target !== btn) {
+                widget.classList.remove('active');
+                btn.classList.remove('pulse');
             }
         }
+
+        // Pulse the button occasionally to draw attention
+        setTimeout(function() {
+            btn.classList.add('pulse');
+            setTimeout(function() {
+                btn.classList.remove('pulse');
+            }, 3000);
+        }, 5000);
 
         // Check dark mode on load
         checkDarkMode();
